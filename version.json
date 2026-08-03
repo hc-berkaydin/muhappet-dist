@@ -1,5 +1,5 @@
 {
-  "build": 202608031740,
+  "build": 202608031749,
   "marketing": "1.0",
-  "notes": "Photos now keep their real shape in chat and in the grid — no more stretching or cropping."
+  "notes": "Swipe down to close photos, and the chat no longer jumps to blank space while typing."
 }
