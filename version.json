@@ -1,5 +1,5 @@
 {
-  "build": 202608031728,
+  "build": 202608031733,
   "marketing": "1.0",
-  "notes": "Fixes the freezing, much faster sends, and long-press now shows reactions straight away."
+  "notes": "Shows online / last seen instead of connecting, fixes scrolling and closes the keyboard on tap."
 }
