@@ -1,5 +1,5 @@
 {
-  "build": 202608031733,
+  "build": 202608031740,
   "marketing": "1.0",
-  "notes": "Shows online / last seen instead of connecting, fixes scrolling and closes the keyboard on tap."
+  "notes": "Photos now keep their real shape in chat and in the grid — no more stretching or cropping."
 }
