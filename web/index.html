@@ -525,7 +525,7 @@ function render() {
   const newest = [...state.messages].reverse().find(m => m.sender_id === state.me.id)
 
   state.messages.forEach(message => {
-    const day = parseStamp(message.created_at)?.toDateString() ?? 
+    const day = parseStamp(message.created_at)?.toDateString() ?? ''
     if (day !== lastDay) {
       list.insertAdjacentHTML('beforeend',
         `<div class="day"><span>${dayLabel(message.created_at)}</span></div>`)
