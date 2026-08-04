@@ -1,5 +1,5 @@
 {
-  "build": 202608050011,
+  "build": 202608050021,
   "marketing": "1.0",
-  "notes": "Mesaj düzenleme, mesaj sabitleme (24 saat veya sonsuz) ve feedback durumu artık anlık güncelleniyor."
+  "notes": "Akıcılık: liste artık her değişimde baştan çizilmiyor, dokunma anında tepki veriyor, animasyonlar tutarlı."
 }
