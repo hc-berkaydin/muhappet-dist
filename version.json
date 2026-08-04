@@ -1,5 +1,5 @@
 {
-  "build": 202608041431,
+  "build": 202608041512,
   "marketing": "1.0",
-  "notes": "Changes from your feedback."
+  "notes": "Notifications now stack instead of replacing each other."
 }
