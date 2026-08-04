@@ -331,7 +331,8 @@ function subscribe() {
 function upsert(row) {
   const index = state.messages.findIndex(m => m.id === row.id)
   if (index >= 0) { state.messages[index] = row; return }
-  const at = state.messages.findIndex(m => m.created_at > row.created_at)
+  const rowAt = parseStamp(row.created_at)?.getTime() ?? 0
+  const at = state.messages.findIndex(m => (parseStamp(m.created_at)?.getTime() ?? 0) > rowAt)
   at === -1 ? state.messages.push(row) : state.messages.splice(at, 0, row)
 }
 
@@ -453,7 +454,7 @@ async function renderHeader() {
 function renderStatus() {
   const el = $('partnerStatus')
   if (state.partnerTyping) { el.textContent = 'typing…'; el.className = 'status live'; return }
-  const seen = state.partner?.last_seen ? new Date(state.partner.last_seen) : null
+  const seen = parseStamp(state.partner?.last_seen)
   if (!seen) { el.textContent = ''; return }
   const ago = Date.now() - seen.getTime()
   if (ago < ONLINE_WINDOW) { el.textContent = 'online'; el.className = 'status live'; return }
@@ -474,14 +475,41 @@ async function mediaURL(path) {
   return url
 }
 
+/// Postgres timestamps are not what `new Date()` expects. Depending on the path
+/// they arrive as "2026-08-04T09:17:24.671702+00:00" (six fractional digits,
+/// which is not ISO 8601) or "2026-08-04 09:17:24.671702+00" (a space instead
+/// of T, and a two-digit zone). Safari rejects all three variants outright and
+/// Chrome only tolerates some — hence "Invalid Date" everywhere.
+///
+/// The phone client needed the same normalisation; this is that fix, ported.
+function parseStamp(value) {
+  if (!value) return null
+  if (value instanceof Date) return isNaN(value) ? null : value
+
+  let text = String(value).trim()
+    .replace(' ', 'T')                       // space separator → T
+    .replace(/(\.\d{3})\d+/, '$1')            // microseconds → milliseconds
+    .replace(/([+-]\d{2})$/, '$1:00')         // +00 → +00:00
+
+  // No zone at all means UTC, which is what Postgres stores.
+  if (!/([Zz]|[+-]\d{2}:\d{2})$/.test(text)) text += 'Z'
+
+  const parsed = new Date(text)
+  return isNaN(parsed) ? null : parsed
+}
+
 const isEmojiOnly = text =>
   text.length <= 6 && /^\p{Extended_Pictographic}+$/u.test(text.replace(/️/g, ''))
 
-const timeLabel = iso =>
-  new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+const timeLabel = iso => {
+  const d = parseStamp(iso)
+  return d ? d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''
+}
 
 function dayLabel(iso) {
-  const d = new Date(iso), today = new Date()
+  const d = parseStamp(iso)
+  if (!d) return ''
+  const today = new Date()
   const yesterday = new Date(Date.now() - 86_400_000)
   if (d.toDateString() === today.toDateString()) return 'Today'
   if (d.toDateString() === yesterday.toDateString()) return 'Yesterday'
@@ -497,14 +525,14 @@ function render() {
   const newest = [...state.messages].reverse().find(m => m.sender_id === state.me.id)
 
   state.messages.forEach(message => {
-    const day = new Date(message.created_at).toDateString()
+    const day = parseStamp(message.created_at)?.toDateString() ?? 
     if (day !== lastDay) {
       list.insertAdjacentHTML('beforeend',
         `<div class="day"><span>${dayLabel(message.created_at)}</span></div>`)
       lastDay = day; lastSender = null
     }
 
-    const stamp = new Date(message.created_at).getTime()
+    const stamp = parseStamp(message.created_at)?.getTime() ?? 0
     const grouped = message.sender_id === lastSender && stamp - lastTime < 300_000
     lastSender = message.sender_id; lastTime = stamp
 
