@@ -1,5 +1,5 @@
 {
-  "build": 202608111730,
+  "build": 202608111803,
   "marketing": "1.0",
-  "notes": "Bağlantı artık sürekli kopup kurulmuyor — mesajlar anlık gelmeli. İki telefona da kurun."
+  "notes": "Çevrimiçi durumu artık anlık — girince hemen online, çıkınca hemen offline."
 }
