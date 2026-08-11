@@ -1,5 +1,5 @@
 {
-  "build": 202608111627,
+  "build": 202608111642,
   "marketing": "1.0",
-  "notes": "Teşhis sürümü: bağlantının gerçekte ne yaptığını kaydediyor."
+  "notes": "Anlık mesajlaşma düzeltmesi: soket artık kimlik doğrulanmış bağlanıyor."
 }
