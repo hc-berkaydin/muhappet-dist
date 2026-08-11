@@ -1,5 +1,5 @@
 {
-  "build": 202608111642,
+  "build": 202608111710,
   "marketing": "1.0",
-  "notes": "Anlık mesajlaşma düzeltmesi: soket artık kimlik doğrulanmış bağlanıyor."
+  "notes": "Yeniden bağlanma artık kalp atışını durdurmuyor. İKİ TELEFONA DA kurun."
 }
