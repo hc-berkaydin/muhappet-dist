@@ -1,5 +1,5 @@
 {
-  "build": 202608111529,
+  "build": 202608111605,
   "marketing": "1.0",
-  "notes": "Yanıtlama çubuğu artık Telegram'daki gibi tek satır, ekranı kaplamıyor."
+  "notes": "Mesajlaşma artık anlık: mesajlar ve okundu bilgisi doğrudan soket üzerinden gidiyor, bağlantı düşerse anında yeniden bağlanıyor."
 }
