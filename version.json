@@ -1,5 +1,5 @@
 {
-  "build": 202608111429,
+  "build": 202608111529,
   "marketing": "1.0",
-  "notes": "Mesajlar artık takılmıyor: bağlantı düşse bile 12 saniyede kendini toparlıyor, çift tik ve okundu bilgisi düzgün geliyor."
+  "notes": "Yanıtlama çubuğu artık Telegram'daki gibi tek satır, ekranı kaplamıyor."
 }
