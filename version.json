@@ -1,5 +1,5 @@
 {
-  "build": 202608072212,
+  "build": 202608111429,
   "marketing": "1.0",
-  "notes": "Changes from your feedback."
+  "notes": "Mesajlar artık takılmıyor: bağlantı düşse bile 12 saniyede kendini toparlıyor, çift tik ve okundu bilgisi düzgün geliyor."
 }
