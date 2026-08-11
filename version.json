@@ -1,5 +1,5 @@
 {
-  "build": 202608111605,
+  "build": 202608111627,
   "marketing": "1.0",
-  "notes": "Mesajlaşma artık anlık: mesajlar ve okundu bilgisi doğrudan soket üzerinden gidiyor, bağlantı düşerse anında yeniden bağlanıyor."
+  "notes": "Teşhis sürümü: bağlantının gerçekte ne yaptığını kaydediyor."
 }
