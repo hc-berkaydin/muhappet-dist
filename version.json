@@ -1,5 +1,5 @@
 {
-  "build": 202609081328,
+  "build": 202609081427,
   "marketing": "1.0",
-  "notes": "Messages now keep server order and the socket repairs itself."
+  "notes": "Scrolling now stays pinned to the newest message, plus GIFs and stickers."
 }
