@@ -1,5 +1,5 @@
 {
-  "build": 202608111814,
+  "build": 202609081328,
   "marketing": "1.0",
-  "notes": "Çevrimiçi göstergesi düzeltildi — kendi bağlantımızı karşı taraf sanıyordu."
+  "notes": "Messages now keep server order and the socket repairs itself."
 }
