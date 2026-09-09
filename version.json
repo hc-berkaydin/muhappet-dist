@@ -1,5 +1,5 @@
 {
-  "build": 202609081427,
+  "build": 202609091511,
   "marketing": "1.0",
-  "notes": "Scrolling now stays pinned to the newest message, plus GIFs and stickers."
+  "notes": "Fixes the freezing, plus Apple's keyboard stickers."
 }
