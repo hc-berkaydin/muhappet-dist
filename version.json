@@ -1,5 +1,5 @@
 {
-  "build": 202609111115,
+  "build": 202609111240,
   "marketing": "1.0",
-  "notes": "Fixes the constant reconnecting that was freezing the app."
+  "notes": "Startup no longer stalls, and requests can't hang forever."
 }
