@@ -1,5 +1,5 @@
 {
-  "build": 202609091511,
+  "build": 202609111115,
   "marketing": "1.0",
-  "notes": "Fixes the freezing, plus Apple's keyboard stickers."
+  "notes": "Fixes the constant reconnecting that was freezing the app."
 }
