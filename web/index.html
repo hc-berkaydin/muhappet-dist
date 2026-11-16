@@ -83,6 +83,9 @@ header button:hover { background: var(--surface); }
   background: var(--surface); position: relative; word-wrap: break-word;
 }
 .row.mine .bubble { background: var(--out-bub); }
+.bubble.sticker, .row.mine .bubble.sticker { background: transparent; padding: 0; box-shadow: none; }
+.bubble.sticker img { max-width: 136px; max-height: 136px; border-radius: 0; }
+.bubble.sticker .meta { color: var(--muted, #8a93a6); }
 /* Tuck the corner facing the rest of a run, matching the iOS grouping. */
 .row.mid  .bubble, .row.last .bubble { border-top-left-radius: 6px; }
 .row.mid  .bubble, .row.first .bubble { border-bottom-left-radius: 6px; }
@@ -281,7 +284,9 @@ async function loadProfiles() {
 
 async function loadMessages() {
   const { data } = await sb.from('messages').select('*')
-    .order('created_at', { ascending: false }).limit(PAGE)
+    // By the server's sequence, the same order the phones use. Timestamps
+    // came from two different clocks and shuffled messages sent together.
+    .order('seq', { ascending: false }).limit(PAGE)
   state.messages = (data ?? []).reverse()
 }
 
@@ -328,12 +333,35 @@ function subscribe() {
     .subscribe()
 }
 
+// Server order first; anything not yet numbered (our own draft) trails it.
+function before(a, b) {
+  const sa = a.seq ?? null, sb_ = b.seq ?? null
+  if (sa !== null && sb_ !== null) return Number(sa) !== Number(sb_) ? Number(sa) < Number(sb_) : a.id < b.id
+  if (sa !== null) return true
+  if (sb_ !== null) return false
+  return (parseStamp(a.created_at)?.getTime() ?? 0) < (parseStamp(b.created_at)?.getTime() ?? 0)
+}
+
 function upsert(row) {
   const index = state.messages.findIndex(m => m.id === row.id)
-  if (index >= 0) { state.messages[index] = row; return }
-  const rowAt = parseStamp(row.created_at)?.getTime() ?? 0
-  const at = state.messages.findIndex(m => (parseStamp(m.created_at)?.getTime() ?? 0) > rowAt)
+  if (index >= 0) {
+    // A copy without a sequence never overwrites one that has it.
+    if ((row.seq ?? null) === null && (state.messages[index].seq ?? null) !== null) return
+    state.messages.splice(index, 1)
+  }
+  const at = state.messages.findIndex(m => before(row, m))
   at === -1 ? state.messages.push(row) : state.messages.splice(at, 0, row)
+}
+
+// One line describing a message wherever it is quoted, kept in step with the
+// phone's Message.previewLine.
+function previewLine(m) {
+  if (m.audio_path) return '🎤 Voice message'
+  if (m.image_path) {
+    const icon = m.media_kind === 'sticker' ? '🙂 Sticker' : m.media_kind === 'gif' ? '🎬 GIF' : '📷 Photo'
+    return m.body ? icon.split(' ')[0] + ' ' + m.body : icon
+  }
+  return m.body ?? ''
 }
 
 // ---------------------------------------------------------------- sending
@@ -561,14 +589,17 @@ function renderRow(message, grouped, isNewestMine) {
   if (message.reply_to) {
     const target = state.messages.find(m => m.id === message.reply_to)
     const who = target ? (target.sender_id === state.me.id ? 'You' : state.partner?.display_name ?? 'Them') : 'Message'
-    const what = target ? (target.image_path ? '📷 Photo' : target.audio_path ? '🎤 Voice message' : target.body ?? '') : 'unavailable'
+    const what = target ? previewLine(target) : 'unavailable'
     bubble.insertAdjacentHTML('beforeend',
       `<div class="reply"><b>${escapeHTML(who)}</b><span>${escapeHTML(what.slice(0, 80))}</span></div>`)
   }
 
+  // A sticker is drawn bare, like on the phones — no bubble behind it.
+  if (message.media_kind === 'sticker') bubble.classList.add('sticker')
+
   if (message.image_path) {
     const img = document.createElement('img')
-    img.alt = 'photo'
+    img.alt = message.media_kind ?? 'photo'
     mediaURL(message.image_path).then(url => { if (url) img.src = url })
     img.addEventListener('click', () => openLightbox(img.src))
     bubble.appendChild(img)
@@ -714,8 +745,7 @@ function setReply(message) {
   $('replying').style.display = 'flex'
   $('replyWho').textContent = 'Replying to ' +
     (message.sender_id === state.me.id ? 'You' : state.partner?.display_name ?? 'Them')
-  $('replyTxt').textContent = message.image_path ? '📷 Photo'
-    : message.audio_path ? '🎤 Voice message' : message.body ?? ''
+  $('replyTxt').textContent = previewLine(message)
   $('input').focus()
 }
 function clearReply() { state.replyingTo = null; $('replying').style.display = 'none' }
